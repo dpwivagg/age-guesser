@@ -39,7 +39,7 @@ def create_cnn_model():
     model.add(Dense(512))
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
-    model.add(Dense(120))
-    model.add(Activation('softmax'))
+    model.add(Dense(1))
+    model.add(Activation('linear'))
 
     return model
