@@ -1,5 +1,7 @@
 from create_model import create_cnn_model
 from keras.preprocessing.image import ImageDataGenerator
+from sklearn.model_selection import train_test_split
+
 import numpy as np
 import cv2
 import pickle
@@ -8,8 +10,8 @@ import datetime # For naming files
 
 model = create_cnn_model()
 
-model.compile(loss='categorical_crossentropy',
-              optimizer='RMSprop',
+model.compile(loss='mean_squared_error',
+              optimizer='SGD',
 	      metrics=['accuracy'])
 
 batch_size = 64
@@ -21,16 +23,20 @@ train_datagen = ImageDataGenerator(horizontal_flip=True)
 # only rescaling
 test_datagen = ImageDataGenerator()
 
-faces = np.load('data/faces.npy')
-ages = np.load('data/ages.npy')
+faces = np.load('data/faces_train.npy')
+ages = np.load('data/ages_train.npy')
+
+faces = np.expand_dims(faces, axis=3)
+
+x_train, x_valid, y_train, y_valid = train_test_split(faces, ages, test_size=0.15, shuffle= True)
 
 # this is a generator that will read pictures found in
 # subfolers of 'data/train', and indefinitely generate
 # batches of augmented image data
-train_generator = train_datagen.flow(faces, ages, batch_size=batch_size)
+train_generator = train_datagen.flow(x_train, y_train, batch_size=batch_size)
 
 # this is a similar generator, for validation data
-validation_generator = test_datagen.flow(faces, ages, batch_size=batch_size)
+validation_generator = test_datagen.flow(x_valid, y_valid, batch_size=batch_size)
 
 # labels = (train_generator.class_indices)
 # label_map = dict((v,k) for k,v in labels.items())
@@ -39,10 +45,10 @@ validation_generator = test_datagen.flow(faces, ages, batch_size=batch_size)
 
 model.fit_generator(
         train_generator,
-        steps_per_epoch=7500 // batch_size,
-        epochs=130,
+        steps_per_epoch=y_train.size // batch_size,
+        epochs=30,
         validation_data=validation_generator,
-        validation_steps=7500 // batch_size,
+        validation_steps=y_valid.size // batch_size,
 	verbose=2)
 
 with open('out/loss-over-time.pkl', 'wb') as f:
