@@ -1,21 +1,27 @@
+print("hello world")
 from create_model import create_cnn_model
 from keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 from keras import optimizers
+import tensorflow as tf
 
 import numpy as np
 import cv2
 import pickle
 import datetime # For naming files
 
-
+print("Creating model")
 model = create_cnn_model()
-adam = optimizers.adam(lr=0.01)
+print("Model created")
+adam = optimizers.adam(lr=0.02)
 
-model.compile(loss='mean_squared_error',
-	      optimizer=adam,
+#model.compile(loss='mean_squared_error',
+#	      optimizer=adam,
+#	      metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy',
+	      optimizer='adam',
 	      metrics=['accuracy'])
-
+print("Model compiled")
 batch_size = 128
 
 # this is the augmentation configuration we will use for training
@@ -29,8 +35,9 @@ faces = np.load('data/faces_train.npy')
 ages = np.load('data/ages_train.npy')
 
 faces = np.expand_dims(faces, axis=3)
-
-x_train, x_valid, y_train, y_valid = train_test_split(faces, ages, test_size=0.1, shuffle= True)
+ages_cat = tf.keras.utils.to_categorical(ages, num_classes=101)
+print("Data ready")
+x_train, x_valid, y_train, y_valid = train_test_split(faces, ages_cat, test_size=0.1, shuffle= True)
 # this is a generator that will read pictures found in
 # subfolers of 'data/train', and indefinitely generate
 # batches of augmented image data
@@ -43,11 +50,11 @@ validation_generator = test_datagen.flow(x_valid, y_valid, batch_size=batch_size
 # label_map = dict((v,k) for k,v in labels.items())
 # with open('out/labels.pkl', 'wb') as f:
 #     pickle.dump(label_map, f, pickle.HIGHEST_PROTOCOL)
-
+print("Beginning training")
 model.fit_generator(
         train_generator,
         steps_per_epoch=y_train.size // batch_size,
-        epochs=125,
+        epochs=100,
         validation_data=validation_generator,
         validation_steps=y_valid.size // batch_size,
 	verbose=2)
