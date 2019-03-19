@@ -106,5 +106,5 @@ venv.bak/
 # Pycharm project settings
 .idea
 
-
+data/*
 

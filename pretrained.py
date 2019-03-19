@@ -51,7 +51,9 @@ def create_cnn_model():
     model.add(Dropout(0.5))
     model.add(Conv2D(101, (1, 1)))
     model.add(Flatten())
-    model.add(Activation('softmax'))
+    model.add(Dense(1))
+    model.add(Activation('linear'))
+#    model.add(Activation('softmax'))
 
     model.summary()
     return model

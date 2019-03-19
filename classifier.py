@@ -17,8 +17,8 @@ rate = 0.005
 print "Learning rate: %f" % rate
 adam = optimizers.adam(lr=rate)
 sgd = optimizers.sgd(lr=0.1)
-model.compile(loss='sparse_categorical_crossentropy',
-	      optimizer=sgd,
+model.compile(loss='mean_squared_error',
+	      optimizer='adam',
 	      metrics=['accuracy', 'mean_squared_error'])
 
 batch_size = 128
