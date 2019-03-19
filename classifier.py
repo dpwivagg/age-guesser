@@ -1,5 +1,5 @@
-print("hello world")
 from create_model import create_cnn_model
+import pretrained
 from keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 from keras import optimizers
@@ -10,7 +10,7 @@ import cv2
 import pickle
 import datetime # For naming files
 
-model = create_cnn_model(4, 4, 1024)
+model = pretrained.create_cnn_model()
 model.summary()
 #model.load_weights('out/model_weightsMar-16-1606.h5')
 rate = 0.005
