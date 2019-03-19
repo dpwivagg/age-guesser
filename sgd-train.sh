@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --output=out/ace-job.out #SBATCH --error=out/errors.err
+#SBATCH --output=out/ace-job-%j.out #SBATCH --error=out/errors.err
 #SBATCH --gres=gpu:2
 #SBATCH --mem 64G
 #SBATCH -t 10:00:00

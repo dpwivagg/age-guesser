@@ -10,19 +10,19 @@ import cv2
 import pickle
 import datetime # For naming files
 
-print("Creating model")
-model = create_cnn_model()
-print("Model created")
-adam = optimizers.adam(lr=0.02)
+model = create_cnn_model(4, 4, 1024)
+model.summary()
+#model.load_weights('out/model_weightsMar-16-1606.h5')
+rate = 0.005
+print "Learning rate: %f" % rate
+adam = optimizers.adam(lr=rate)
+sgd = optimizers.sgd(lr=0.1)
+model.compile(loss='sparse_categorical_crossentropy',
+	      optimizer=sgd,
+	      metrics=['accuracy', 'mean_squared_error'])
 
-#model.compile(loss='mean_squared_error',
-#	      optimizer=adam,
-#	      metrics=['accuracy'])
-model.compile(loss='categorical_crossentropy',
-	      optimizer='adam',
-	      metrics=['accuracy'])
-print("Model compiled")
 batch_size = 128
+print "Batch size: %i" % batch_size
 
 # this is the augmentation configuration we will use for training
 train_datagen = ImageDataGenerator(horizontal_flip=True)
@@ -33,11 +33,10 @@ test_datagen = ImageDataGenerator()
 
 faces = np.load('data/faces_train.npy')
 ages = np.load('data/ages_train.npy')
-
+np.round(ages)
 faces = np.expand_dims(faces, axis=3)
-ages_cat = tf.keras.utils.to_categorical(ages, num_classes=101)
-print("Data ready")
-x_train, x_valid, y_train, y_valid = train_test_split(faces, ages_cat, test_size=0.1, shuffle= True)
+#ages_cat = tf.keras.utils.to_categorical(ages, num_classes=101)
+x_train, x_valid, y_train, y_valid = train_test_split(faces, ages, test_size=0.25, shuffle= True)
 # this is a generator that will read pictures found in
 # subfolers of 'data/train', and indefinitely generate
 # batches of augmented image data
@@ -50,13 +49,12 @@ validation_generator = test_datagen.flow(x_valid, y_valid, batch_size=batch_size
 # label_map = dict((v,k) for k,v in labels.items())
 # with open('out/labels.pkl', 'wb') as f:
 #     pickle.dump(label_map, f, pickle.HIGHEST_PROTOCOL)
-print("Beginning training")
 model.fit_generator(
         train_generator,
-        steps_per_epoch=y_train.size // batch_size,
-        epochs=100,
+        steps_per_epoch=y_train.shape[0] // batch_size,
+        epochs=200,
         validation_data=validation_generator,
-        validation_steps=y_valid.size // batch_size,
+        validation_steps=y_valid.shape[0] // batch_size,
 	verbose=2)
 
 with open('out/loss-over-time.pkl', 'wb') as f:
