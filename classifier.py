@@ -44,10 +44,6 @@ train_generator = train_datagen.flow(x_train, y_train, batch_size=batch_size)
 # this is a similar generator, for validation data
 validation_generator = test_datagen.flow(x_valid, y_valid, batch_size=batch_size)
 
-# labels = (train_generator.class_indices)
-# label_map = dict((v,k) for k,v in labels.items())
-# with open('out/labels.pkl', 'wb') as f:
-#     pickle.dump(label_map, f, pickle.HIGHEST_PROTOCOL)
 model.fit_generator(
         train_generator,
         steps_per_epoch=y_train.shape[0] // batch_size,
@@ -56,21 +52,10 @@ model.fit_generator(
         validation_steps=y_valid.shape[0] // batch_size,
 	verbose=2)
 
-with open('out/loss-over-time.pkl', 'wb') as f:
-    pickle.dump(model.history, f, pickle.HIGHEST_PROTOCOL)
-
 model.save_weights('out/model_weights%s.h5' % datetime.datetime.today().strftime('%b-%d-%H%M'))
 
-# img1 = cv2.imread('../Images/n02086910-papillon/n02086910_54.jpg')
-# img1 = cv2.resize(img1, (200,200))
-#
 # img1 = np.array(img1).reshape((1, 200, 200, 3))
 # prediction = model.predict_classes(img1)
-#
-# with open('out/labels.pkl', 'rb') as f:
-#     label_map = pickle.load(f)
-#
-# print(label_map[prediction[0]])
 
 score = model.evaluate_generator(validation_generator, steps=1, verbose=1)
 print(score)
