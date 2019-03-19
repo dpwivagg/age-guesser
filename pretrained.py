@@ -56,5 +56,4 @@ def create_cnn_model():
     model.add(Activation('linear'))
 #    model.add(Activation('softmax'))
 
-    model.summary()
     return model
