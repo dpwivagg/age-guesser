@@ -50,6 +50,7 @@ def create_cnn_model():
     model.add(Conv2D(2048, (1, 1), activation='relu'))
     model.add(Dropout(0.5))
     model.add(Conv2D(101, (1, 1)))
+    model.add(Dropout(0.5))
     model.add(Flatten())
     model.add(Dense(1))
     model.add(Activation('linear'))

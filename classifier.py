@@ -13,15 +13,14 @@ import datetime # For naming files
 model = pretrained.create_cnn_model()
 model.summary()
 #model.load_weights('out/model_weightsMar-16-1606.h5')
-rate = 0.005
-print "Learning rate: %f" % rate
+rate = 0.001
+print "Learning rate: %.4f" % rate
 adam = optimizers.adam(lr=rate)
-sgd = optimizers.sgd(lr=0.1)
 model.compile(loss='mean_squared_error',
-	      optimizer='adam',
-	      metrics=['accuracy', 'mean_squared_error'])
+	      optimizer=adam,
+	      metrics=['mean_squared_error'])
 
-batch_size = 128
+batch_size = 64
 print "Batch size: %i" % batch_size
 
 # this is the augmentation configuration we will use for training
@@ -52,7 +51,7 @@ validation_generator = test_datagen.flow(x_valid, y_valid, batch_size=batch_size
 model.fit_generator(
         train_generator,
         steps_per_epoch=y_train.shape[0] // batch_size,
-        epochs=200,
+        epochs=50,
         validation_data=validation_generator,
         validation_steps=y_valid.shape[0] // batch_size,
 	verbose=2)
