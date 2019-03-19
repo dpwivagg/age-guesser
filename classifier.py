@@ -12,7 +12,11 @@ import datetime # For naming files
 
 model = pretrained.create_cnn_model()
 model.summary()
-#model.load_weights('out/model_weightsMar-16-1606.h5')
+model.load_weights('out/model_weightsMar-19-1658.h5')
+print(len(model.layers))
+for layer in model.layers[:32]:
+    layer.trainable = False
+
 rate = 0.001
 print "Learning rate: %.4f" % rate
 adam = optimizers.adam(lr=rate)
@@ -47,12 +51,14 @@ validation_generator = test_datagen.flow(x_valid, y_valid, batch_size=batch_size
 model.fit_generator(
         train_generator,
         steps_per_epoch=y_train.shape[0] // batch_size,
-        epochs=50,
+        epochs=60,
         validation_data=validation_generator,
         validation_steps=y_valid.shape[0] // batch_size,
 	verbose=2)
 
-model.save_weights('out/model_weights%s.h5' % datetime.datetime.today().strftime('%b-%d-%H%M'))
+filename = 'out/model_weights%s.h5' % datetime.datetime.today().strftime('%b-%d-%H%M')
+model.save_weights(filename)
+print("model saved in file %s" % filename) 
 
 # img1 = np.array(img1).reshape((1, 200, 200, 3))
 # prediction = model.predict_classes(img1)
