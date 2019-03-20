@@ -21,4 +21,4 @@ def predict(weights_path, faces_path, ages_path=None):
         print(model.evaluate(faces, ages))
         print(model.metrics_names)
 
-    return prediction
+    return prediction.squeeze()
