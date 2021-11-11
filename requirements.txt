@@ -11,7 +11,7 @@ numpy==1.15.4
 opencv-python==3.4.3.18
 Pillow==8.3.2
 protobuf==3.6.1
-PyYAML==3.13
+PyYAML==5.4
 scipy==1.1.0
 six==1.11.0
 tensorboard==1.12.0
